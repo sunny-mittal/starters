@@ -1,0 +1,39 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "indent": [ "error", 2 ],
+        "linebreak-style": [ "error", "unix" ],
+        "quotes": [ "error", "single" ],
+        "semi": [ "error", "never" ],
+        "no-console": 0,
+        "no-extra-parens": [ 2, "all" ],
+        "no-irregular-whitespace": 2,
+        "no-unreachable": 2,
+        "curly": [ 2, "multi-line" ],
+        "no-else-return": 2,
+        "no-extra-bind": 2,
+        "no-useless-call": 2,
+        "no-undefined": 2,
+        "no-unused-vars": 2,
+        "array-bracket-spacing": [ 2, "always", { "objectsInArrays": false } ],
+        "brace-style": [ 2, "1tbs", { "allowSingleLine": true } ],
+        "eol-last": 2,
+        "no-trailing-spaces": 2,
+        "object-curly-spacing": [ 2, "always", { "arraysInObjects": true, "objectsInObjects": true } ]
+    }
+}
