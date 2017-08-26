@@ -1,30 +1,26 @@
 {
   "name": "webpack-react-redux",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple starter package for Redux with React and Babel support",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --content-base build --hot --inline"
+    "start": "webpack-dev-server --hot --inline"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "2.0.0-alpha.19",
-    "babel-preset-react": "^6.24.1",
-    "babel-register": "^6.26.0",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "webpack": "^3.5.5",
-    "webpack-dev-server": "^2.7.1"
+    "babel-core": "^6.2.1",
+    "babel-loader": "^6.2.0",
+    "babel-preset-react": "^6.1.18",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.14.0"
   },
   "dependencies": {
+    "babel-preset-env": "^1.6.0",
     "eslint": "^4.5.0",
     "eslint-config-standard-jsx": "^4.0.2",
-    "eslint-plugin-react": "^7.3.0",
-    "react-redux": "^5.0.6",
-    "redux": "^3.7.2"
+    "eslint-plugin-react": "^7.2.1",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-redux": "4.3.0",
+    "redux": "^3.0.4"
   }
 }

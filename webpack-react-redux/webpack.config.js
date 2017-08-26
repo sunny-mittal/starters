@@ -1,19 +1,26 @@
-const path = require('path')
-
 module.exports = {
-  entry: './src/main.js',
+  entry: [
+    './src/index.js'
+  ],
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: __dirname,
+    publicPath: '/',
     filename: 'bundle.js'
   },
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
+    loaders: [ {
       exclude: /node_modules/,
-      loader: 'babel-loader',
+      loader: 'babel',
       query: {
-        presets: ['react', 'env']
+        presets: [ 'react', 'env' ]
       }
-    }]
+    } ]
+  },
+  resolve: {
+    extensions: [ '', '.js', '.jsx' ]
+  },
+  devServer: {
+    historyApiFallback: true,
+    contentBase: './'
   }
 }
