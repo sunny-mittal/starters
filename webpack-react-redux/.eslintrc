@@ -1,0 +1,112 @@
+{
+  "globals": {
+    "fetch": true,
+    "alert": true,
+    "console": true,
+    "window": true,
+    "document": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 8,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react"
+  ],
+  "extends": [
+    "standard-jsx"
+  ],
+  "rules": {
+    "no-dupe-args": 2,
+    "no-dupe-keys": 2,
+    "no-duplicate-case": 2,
+    "no-extra-parens": [
+      2,
+      "all"
+    ],
+    "no-extra-semi": 2,
+    "no-irregular-whitespace": 2,
+    "no-unreachable": 2,
+    "dot-notation": 2,
+    "no-extra-bind": 2,
+    "no-lone-blocks": 2,
+    "no-multi-spaces": 2,
+    "no-redeclare": 2,
+    "no-self-compare": 2,
+    "no-useless-call": 2,
+    "no-unused-vars": 2,
+    "no-undef": 2, 
+    "semi": [
+      2, 
+      "never"
+    ],
+    "space-before-function-paren": [
+      2,
+      "never"
+    ],
+    "array-bracket-spacing": [
+      2,
+      "always",
+      {
+        "singleValue": true,
+        "objectsInArrays": true,
+        "arraysInArrays": true
+      }
+    ],
+    "eol-last": 2,
+    "indent": [
+      2,
+      2
+    ],
+    "key-spacing": [
+      2,
+      {
+        "afterColon": true
+      }
+    ],
+    "keyword-spacing": 2,
+    "block-spacing": 2,
+    "space-before-blocks": 2,
+    "no-mixed-spaces-and-tabs": [
+      2,
+      "smart-tabs"
+    ],
+    "no-multiple-empty-lines": [
+      2,
+      {
+        "max": 2
+      }
+    ],
+    "no-spaced-func": 2,
+    "no-trailing-spaces": 2,
+    "object-curly-spacing": [
+      2,
+      "always",
+      {
+        "arraysInObjects": true,
+        "objectsInObjects": true
+      }
+    ],
+    "quotes": [
+      2,
+      "single",
+      "avoid-escape"
+    ],
+    "space-in-parens": [
+      "error",
+      "never"
+    ],
+    "space-infix-ops": 2,
+    "space-unary-ops": [
+      2,
+      {
+        "words": true,
+        "nonwords": false
+      }
+    ] 
+  }
+}

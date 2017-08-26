@@ -1,2 +1,2 @@
 import React from 'react'
-import dom from 'react-dom'
+import Dom from 'react-dom'
