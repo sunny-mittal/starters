@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js'
@@ -10,10 +10,7 @@ module.exports = {
     loaders: [{
       test: /\.jsx?$/,
       exclude: /node_modules/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['latest']
-      }
+      loader: 'babel-loader'
     }]
   }
 }
