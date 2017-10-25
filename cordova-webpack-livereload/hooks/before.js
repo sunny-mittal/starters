@@ -1,112 +1,118 @@
-module.exports = function (ctx) {
-	const Q = ctx.requireCordovaModule('q'),
-		path = ctx.requireCordovaModule('path'),
-		fs = ctx.requireCordovaModule('fs'),
-		pRoot = ctx.opts.projectRoot,
+module.exports = function(ctx) {
+  const Q = ctx.requireCordovaModule('q')
+  const path = ctx.requireCordovaModule('path')
+  const fs = ctx.requireCordovaModule('fs')
+  const pRoot = ctx.opts.projectRoot
+  const wwwFolder = path.resolve(pRoot, 'www/')
+  const moveAllTo = path.resolve(wwwFolder, 'platform_cordova_files/')
 
-		wwwFolder = path.resolve(pRoot, "www/"),
-		moveAllTo = path.resolve(wwwFolder, "platform_cordova_files/")
+  const sys = {
+    getPlatformDir(platform, cordovaFile) {
+      if (platform === 'android')
+        return path.resolve(
+          __dirname,
+          `../platforms/${platform}/assets/www/${cordovaFile ? 'cordova.js' : ''}`
+        )
+      return path.resolve(
+        __dirname,
+        `../platforms/${platform}/www/${cordovaFile ? 'cordova.js' : ''}`
+      )
+    },
 
-	const sys = {
-		getPlatformDir(platform, cordovaFile) {
+    copyRecursiveSync(src, dest) {
+      let exists = fs.existsSync(src)
+      let stats = exists && fs.statSync(src)
+      let isDirectory = exists && stats.isDirectory()
 
-			if( platform === 'android')
-				return path.resolve(__dirname, `../platforms/${platform}/assets/www/${cordovaFile ? "cordova.js" : ""}`)
-			else
-				return path.resolve(__dirname, `../platforms/${platform}/www/${cordovaFile ? "cordova.js" : ""}`)
-		},
+      if (exists && isDirectory) {
+        if (!fs.existsSync(dest)) fs.mkdirSync(dest)
 
-		copyRecursiveSync(src, dest) {
-			let exists = fs.existsSync(src),
-				stats = exists && fs.statSync(src),
-				isDirectory = exists && stats.isDirectory()
+        fs.readdirSync(src).forEach(childItemName => {
+          sys.copyRecursiveSync(
+            path.join(src, childItemName),
+            path.join(dest, childItemName)
+          )
+        })
+      } else fs.linkSync(src, dest)
+    },
 
-			if (exists && isDirectory) {
+    checkAndCopy(platforms) {
+      platforms.forEach(platform => {
+        if (
+          fs.existsSync(sys.getPlatformDir(platform)) &&
+          fs.existsSync(sys.getPlatformDir(platform, true))
+        ) {
+          let movePath = path.resolve(moveAllTo, platform + '/')
 
-				if(!fs.existsSync(dest))
-					fs.mkdirSync(dest)
+          if (!fs.existsSync(movePath)) fs.mkdirSync(movePath)
 
-				fs.readdirSync(src).forEach((childItemName) => {
-					sys.copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName))
-				})
-			} else
-				fs.linkSync(src, dest)
-		},
+          sys.copyRecursiveSync(sys.getPlatformDir(platform), movePath)
+        }
+      })
+    },
 
-		checkAndCopy(platforms) {
-			platforms.forEach((platform) => {
-				if (fs.existsSync(sys.getPlatformDir(platform)) && fs.existsSync(sys.getPlatformDir(platform, true))) {
-					let movePath = path.resolve(moveAllTo, platform + '/')
+    copyMainXml() {
+      fs
+        .createReadStream(path.resolve(__dirname, '../config.xml'))
+        .pipe(fs.createWriteStream(path.resolve(wwwFolder, 'config.xml')))
+    },
 
-					if (!fs.existsSync(movePath))
-						fs.mkdirSync(movePath)
+    checkOption(name) {
+      return (
+        typeof ctx.opts !== 'undefined' &&
+        typeof ctx.opts.options !== 'undefined' &&
+        typeof ctx.opts.options[name] !== 'undefined' &&
+        ctx.opts.options[name] === true
+      )
+    },
 
-					sys.copyRecursiveSync(sys.getPlatformDir(platform), movePath)
-				}
-			})
-		},
+    checkArgv(name) {
+      return (
+        typeof ctx.opts !== 'undefined' &&
+        typeof ctx.opts.options !== 'undefined' &&
+        typeof ctx.opts.options.argv !== 'undefined' &&
+        ((Array.isArray(ctx.opts.options.argv) &&
+          ctx.opts.options.argv.indexOf(name) > -1) ||
+          ctx.opts.options.argv[name] === true)
+      )
+    },
 
-		copyMainXml() {
-			fs.createReadStream(path.resolve(__dirname, "../config.xml")).pipe(fs.createWriteStream(path.resolve(wwwFolder, "config.xml")))
-		},
+    isFoundInCmdline(cmdCommand) {
+      return (
+        ctx.cmdLine.indexOf(`cordova ${cmdCommand}`) > -1 ||
+        ctx.cmdLine.indexOf(`phonegap ${cmdCommand}`) > -1
+      )
+    }
+  }
 
-		checkOption(name) {
-			return (
-				typeof ctx.opts !== "undefined" &&
-				typeof ctx.opts.options !== "undefined" &&
-				typeof ctx.opts.options[name] !== "undefined" &&
-				ctx.opts.options[name] === true
-			)
-		},
+  let deferral = new Q.defer()
+  let isRun = sys.isFoundInCmdline('run')
+  let isEmulate = sys.isFoundInCmdline('emulate')
+  let isPrepare = sys.isFoundInCmdline('prepare')
+  let isServe = sys.isFoundInCmdline('serve')
+  let isLiveReload =
+    sys.checkArgv('--live-reload') ||
+    sys.checkArgv('--lr') ||
+    sys.checkArgv('lr') ||
+    sys.checkArgv('live-reload')
 
-		checkArgv(name) {
-			return (
-				typeof ctx.opts !== "undefined" &&
-				typeof ctx.opts.options !== "undefined" &&
-				typeof ctx.opts.options.argv !== "undefined" &&
-				(
-					Array.isArray(ctx.opts.options.argv) &&
-					ctx.opts.options.argv.indexOf(name) > -1 ||
-					ctx.opts.options.argv[name] === true
-				)
-			)
-		},
+  if (ctx.opts.platforms.length === 0 && !isPrepare) {
+    console.log('Update happened. Skipping...')
+    deferral.resolve()
+  } else {
+    if (isServe || ((isRun || isEmulate) && isLiveReload)) {
+      console.log('Copying platform cordova files...')
 
-		isFoundInCmdline( cmdCommand ) {
-			return (
-				ctx.cmdLine.indexOf(`cordova ${cmdCommand}`) > -1 ||
-				ctx.cmdLine.indexOf(`phonegap ${cmdCommand}`) > -1
-			)
-		}
-	}
+      if (!fs.existsSync(moveAllTo)) fs.mkdirSync(moveAllTo)
 
-	let deferral = new Q.defer(),
-		isRun = sys.isFoundInCmdline('run'),
-		isEmulate = sys.isFoundInCmdline('emulate'),
-		isPrepare = sys.isFoundInCmdline('prepare'),
-		isServe = sys.isFoundInCmdline('serve'),
-		isLiveReload = sys.checkArgv('--live-reload') || sys.checkArgv('--lr') || sys.checkArgv('lr') || sys.checkArgv('live-reload')
+      sys.checkAndCopy(['android', 'ios', 'browser'])
+      sys.copyMainXml()
 
-	if (ctx.opts.platforms.length === 0 && !isPrepare) {
-		console.log("Update happened. Skipping...")
-		deferral.resolve()
-	}
-	else {
-		if (isServe || (isRun || isEmulate) && isLiveReload) {
-			console.log("Copying platform cordova files...")
+      console.log('All platform files copied to www/platform_cordova_files/ directory')
+    } else console.log('Dev server not running. Skipping...')
 
-			if (!fs.existsSync(moveAllTo))
-				fs.mkdirSync(moveAllTo)
+    deferral.resolve()
+  }
 
-			sys.checkAndCopy(['android', 'ios', 'browser'])
-			sys.copyMainXml()
-
-			console.log("All platform files copied to www/platform_cordova_files/ directory")
-		} else
-			console.log("Dev server not running. Skipping...")
-
-		deferral.resolve()
-	}
-
-	return deferral.promise
+  return deferral.promise
 }

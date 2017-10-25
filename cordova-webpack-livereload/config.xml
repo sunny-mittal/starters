@@ -2,7 +2,7 @@
 <widget id="com.starter" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <hook src="hooks/hooks.js" type="before_prepare" />
     <hook src="hooks/before.js" type="before_deploy" />
-    <name></name>
+    <name />
     <description>
     </description>
     <content src="index.html" />
